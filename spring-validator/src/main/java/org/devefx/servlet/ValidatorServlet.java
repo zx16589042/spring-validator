@@ -1,6 +1,9 @@
 package org.devefx.servlet;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,23 +19,23 @@ public class ValidatorServlet extends HttpServlet {
 	private static final long serialVersionUID = -3634086291767542989L;
 
 	private ValidatorConfig validatorConfig;
-	private String basePath = "";
 	
 	private static final ValidatorManager validatorManager = new ValidatorManager();
 
 	private int contextPathLength;
+	private String basePath = "";
 	
 	@Override
 	public void init(ServletConfig servletConfig) throws ServletException {
 		createValidatorConfig(servletConfig.getInitParameter("configClass"));
 		
-		if (!validatorManager.init(validatorConfig)) {
-			throw new RuntimeException("ValidatorManager init error!");
-		}
-		
 		String path = servletConfig.getInitParameter("basePath");
 		if (path != null)
-			basePath = path;
+			this.basePath = path;
+		
+		if (!validatorManager.init(validatorConfig, basePath)) {
+			throw new RuntimeException("ValidatorManager init error!");
+		}
 		
 		String contextPath = servletConfig.getServletContext().getContextPath();
 		contextPathLength = (contextPath == null || "/".equals(contextPath) ? 0 : contextPath.length());
@@ -61,8 +64,14 @@ public class ValidatorServlet extends HttpServlet {
 		String target = request.getRequestURI();
 		if (contextPathLength != 0)
 			target = target.substring(contextPathLength);
-		if (basePath != "") {
-			target = target.substring(basePath.length());
+		
+		if (target.equals(basePath)) {
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream("validator.js");
+			if (inputStream == null) {
+				throw new FileNotFoundException("validator.js file not found!");
+			}
+			write(inputStream, response.getOutputStream());
+			return;
 		}
 		
 		try {
@@ -72,5 +81,16 @@ public class ValidatorServlet extends HttpServlet {
 			}
 		} catch (Exception e) {
 		}
+	}
+	
+	private void write(InputStream inputStream, OutputStream outputStream) throws IOException {
+		byte[] buff = new byte[1024];
+		int length = 0;
+		while((length = inputStream.read(buff)) != -1){
+			outputStream.write(buff, 0, length);
+		}
+		outputStream.flush();
+		outputStream.close();
+		inputStream.close();
 	}
 }
