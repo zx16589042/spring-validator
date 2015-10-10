@@ -7,7 +7,8 @@ public class ValidatorManager {
 	
 	private final Routes routes = new Routes();
 	
-	public boolean init(ValidatorConfig validatorConfig) {
+	public boolean init(ValidatorConfig validatorConfig, String basePath) {
+		routes.setBasePath(basePath);
 		
 		validatorConfig.configValidator(routes);
 		
