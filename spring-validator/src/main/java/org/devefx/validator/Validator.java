@@ -57,6 +57,8 @@ public abstract class Validator {
 				
 				VelocityEngine velocityEngine = new VelocityEngine();
 				velocityEngine.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, getClass().getResource("/").getPath());
+				velocityEngine.setProperty(Velocity.RESOURCE_LOADER, "class");
+				velocityEngine.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 				
 				VelocityContext velocityContext = new VelocityContext();
 				velocityContext.put("scripts", validator.javascript);
