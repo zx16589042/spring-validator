@@ -66,7 +66,9 @@ public abstract class Validator {
 				template.merge(velocityContext, writer);
 				this.scriptText = writer.toString();
 			}
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		

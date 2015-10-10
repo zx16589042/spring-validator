@@ -20,7 +20,9 @@ public class Routes {
 			throw new IllegalArgumentException("The mapping already exists: " + mapping);
 		try {
 			map.put(mapping, validatorClass.newInstance());
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	}
