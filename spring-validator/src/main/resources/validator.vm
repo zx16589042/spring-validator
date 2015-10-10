@@ -1,30 +1,30 @@
 (function($){
-	$.fn.extend({
-		validator: function(callback){
-			var selector = this.selector;
-			$(this.selector).submit(function(){
-				var validator = new Validator(selector);
+    $.fn.extend({
+        validator: function(callback){
+            var selector = this.selector;
+            $(this.selector).submit(function(){
+                var validator = new Validator(selector);
+                validator.validate = function() {
 #foreach($script in $scripts)
-				validator.$script
+                    this.$script
 #end
-				if(!validator.isSuccess()) {
-					try {
-						callback(false, validator.getValidatorResult());
-					} catch (e) {
-						console.error(e);
-					}
-					return false;
-				}
-				var result = false;
-				try {
-					callback(true);
-				} catch (e) {
-					console.error(e);
-				}
-				if(result != undefined && result == false) {
-					return false;
-				}
-			});
-		}
-	});
+                };
+                try {
+                    validator.validate();
+                } catch (e) { }
+                if(validator.invalid) {
+                    try {
+                        callback(false, validator.error);
+                    } catch (e) { }
+                    return false;
+                }
+                var handler = false;
+                try {
+                    handler = callback(true);
+                } catch (e) { }
+                if(handler != undefined && handler == false);
+                    return false;
+            });
+        }
+    });
 })(jQuery);
