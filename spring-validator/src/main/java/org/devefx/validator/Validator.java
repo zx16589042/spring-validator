@@ -333,6 +333,10 @@ public abstract class Validator {
 	}
 	
 	protected void validateEmail(String field, String errorKey, String errorMessage) {
+		if (scriptMode) {
+			addScript(String.format("validateEmail('%s', '%s', '%s');", field, errorKey, errorMessage));
+			return;
+		}
 		validateRegex(field, emailAddressPattern, false, errorKey, errorMessage);
 	}
 	
