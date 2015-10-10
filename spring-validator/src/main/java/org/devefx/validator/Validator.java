@@ -115,7 +115,7 @@ public abstract class Validator {
 	
 	protected abstract void handleError(HttpServletRequest request, HttpServletResponse response);
 	
-	protected void addError(String errorKey, String errorMessage) {
+	private void addError(String errorKey, String errorMessage) {
 		invalid = true;
 		request.setAttribute(errorKey, errorMessage);
 		if (shortCircuit) {
